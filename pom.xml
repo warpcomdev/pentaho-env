@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2020 Telefónica Soluciones de Informática y Comunicaciones de España, S.A.U.
+
+    This file is part of Pentaho DSP.
+
+    Pentaho DSP is free software: you can redistribute it and/or
+    modify it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    Pentaho DSP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+    General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Orion Context Broker. If not, see http://www.gnu.org/licenses/.
+
+    For those usages not covered by this license please contact with
+    sc_support at telefonica dot com
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.telefonica.urbo2</groupId>
+    <artifactId>pentaho-dsp</artifactId>
+    <version>1.0.0</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.telefonica.urbo2</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+            <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-install-plugin</artifactId>
+		<version>3.0.0-M1</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+			<goals><goal>install-file</goal></goals>
+                        <id>mondrian</id>
+                        <configuration>
+                            <file>lib/mondrian-3.0.jar</file>
+                            <groupId>mondrian</groupId>
+                            <artifactId>mondrian</artifactId>
+                            <version>3.0</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals><goal>install-file</goal></goals>
+                        <id>pentaho-platform-core</id>
+                        <configuration>
+                            <file>lib/pentaho-platform-core-8.2.0.0-342.jar</file>
+                            <groupId>pentaho</groupId>
+                            <artifactId>pentaho-platform-core</artifactId>
+                            <version>8.2.0.0-342</version>
+                           <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals><goal>install-file</goal></goals>
+                        <id>pentaho-platform-api</id>
+                        <configuration>
+                            <file>lib/pentaho-platform-api-8.2.0.1-427.jar</file>
+                            <groupId>pentaho</groupId>
+                            <artifactId>pentaho-platform-api</artifactId>
+                            <version>8.2.0.1-427</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                     </execution>
+                 </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>pentaho-repo</id>
+            <name>pentaho-repo</name>
+            <url>https://public.nexus.pentaho.org/content/groups/omni/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>mondrian</groupId>
+            <artifactId>mondrian</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-platform-api</artifactId>
+            <version>8.2.0.1-427</version>
+        </dependency>
+
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-platform-core</artifactId>
+            <version>8.2.0.0-342</version>
+        </dependency>
+
+    </dependencies>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>pentaho-repo</id>
+            <name>pentaho-repo</name>
+            <url>https://public.nexus.pentaho.org/content/groups/omni/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>
