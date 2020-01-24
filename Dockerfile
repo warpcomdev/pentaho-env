@@ -28,5 +28,15 @@ ADD hooks /opt/hooks/
 
 # Add source code to /home/pentaho
 USER pentaho
-ADD pom.xml /home/pentaho
-ADD src /home/pentaho/src
+ADD . /home/pentaho
+
+# Initialize local mvn repo so that the .jar can be built offline
+RUN cd /home/pentaho && \
+    mvn -B initialize && \
+    mvn -B dependency:go-offline
+
+# dependency:go-offline is not enough,
+# we have to build the package to download the jars.
+RUN cd /home/pentaho && \
+    mvn -B package && \
+    mvn -B clean

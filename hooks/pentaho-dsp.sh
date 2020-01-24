@@ -44,11 +44,11 @@ for DEPENDENCY in mondrian pentaho-platform-core pentaho-platform-api; do
 
 done
 
-# Now, compile
-echo "COMPILANDO pentaho-dsp"
-/usr/local/bin/mvn -q -B --file pom.new.xml initialize
-/usr/local/bin/mvn -q -B --file pom.new.xml package
+# Now, recompile with the proper version of the pentaho libs
+echo "COMPILANDO pentaho-dsp offline"
+/usr/local/bin/mvn -o -q -B --file pom.new.xml initialize
+/usr/local/bin/mvn -o -q -B --file pom.new.xml package
 
 # And move to the proper location
-echo "INSTALANDO librería pentaho-dsp en WEB-INF/lib"
+echo "INSTALANDO libreria pentaho-dsp en WEB-INF/lib"
 mv target/pentaho-dsp-*.jar "${PENTAHO_HOME}/tomcat/webapps/pentaho/WEB-INF/lib/pentaho-dsp.jar"
