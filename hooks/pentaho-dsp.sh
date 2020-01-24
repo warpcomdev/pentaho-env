@@ -46,8 +46,8 @@ done
 
 # Now, compile
 echo "COMPILANDO pentaho-dsp"
-/usr/local/bin/mvn -q -B initialize
-/usr/local/bin/mvn -q -B package
+/usr/local/bin/mvn -q -B --file pom.new.xml initialize
+/usr/local/bin/mvn -q -B --file pom.new.xml package
 
 # And move to the proper location
 echo "INSTALANDO librería pentaho-dsp en WEB-INF/lib"
