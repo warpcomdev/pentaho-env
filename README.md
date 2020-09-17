@@ -514,7 +514,7 @@ La instalación de Pentaho comienza con el usuario y password por defecto:
 
 Es necesario cambiar estas credenciales desde la ventana de administración de Pentaho, siguiendo estos pasos:
 
-- Acceder a *https://<IP del servidor Pentaho>*, e iniciar sesión con las credenciales por defecto.
+- Acceder a `https://<IP del servidor Pentaho>`, e iniciar sesión con las credenciales por defecto.
 
 ![Ventana de login pentaho](img/login-pentaho.png)
 
