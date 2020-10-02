@@ -248,7 +248,7 @@ Password for user iot_hibuser:
 
 ### Configuración de nodo principal
 
-Se asume que la instalación de Pentaho se hará mediante un cluster de dos nodos en alta disponibilidad. Cada nodo necesita de un ID único dentro del cluster, que se provisiona ejecutando estos comandos en el servidor principal:
+Se asume que la instalación de Pentaho se hará mediante un cluster de dos nodos en alta disponibilidad. **Cada nodo de Pentaho necesita de un ID único dentro del cluster**, que se provisiona ejecutando estos comandos en el servidor principal:
 
 ```bash
 # Credenciales de los usuarios de bases de datos.
@@ -285,6 +285,8 @@ DB_PASSWORD="deprecated"
 DB_CLUSTER="node1"
 ```
 
+La variable `DB_CLUSTER` debe tener un valor distinto en cada servidor de Pentaho. Por ejemplo, si en el primer servidor de PEntaho hemos usado *node1*, en el segundo servidor podemos usar *node2*. Si ambos servidores tienen configurados el mismo ID de cluster, se corre el riesgo de que corrompan la base de datos al escribir los dos a la vez.
+
 A pesar de que las claves de acceso a la base de datos se almacenen en este fichero en texto plano, esto no se considera un fallo crítico de seguridad porque estos mismos passwords están almacenados en otros ficheros de configuración *.xml* y *.conf* del volumen /opt/pentaho/pentaho-server, y deben estar sin cifrar por requerimientos de Pentaho. La existencia del fichero *env.postgresl* no hace este despliegue más inseguro, sólo hace la inseguridad que ya existía más evidente.
 
 - Se debe proteger adecuadamente el acceso al servidor, y al volumen /opt/pentaho/pentaho-server.
@@ -294,7 +296,7 @@ Actualmente, no es necesario importar manualmente en la base de datos el schema 
 
 ### Configuración de nodo de respaldo
 
-El nodo de respaldo se configura exactamente igual que el principal, pero utilizando un nombre de nodo distinto:
+El servidor Pentaho de respaldo se configura exactamente igual que el principal, pero **utilizando un nombre de nodo distinto**, por ejemplo `node2` en lugar de `node1`:
 
 ```bash
 # Credenciales de los usuarios de bases de datos.
@@ -315,7 +317,7 @@ $ docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
   "$POSTGRES_HOST" "$POSTGRES_PORT" iot_ deprecated "node2"
 ```
 
-De nuevo, la correcta ejecución de este script generará un fichero */opt/pentaho/pentaho-server/env.postgresql* como el siguiente:
+De nuevo, la correcta ejecución de este script generará un fichero */opt/pentaho/pentaho-server/env.postgresql* como el siguiente contenido (comprobar que el ID de nodo, variable `DB_CLUSTER`, es diferente al otro servidor):
 
 ```bash
 $ cat /opt/pentaho/pentaho-server/env.postgresql
@@ -347,7 +349,7 @@ El servicio se ejecuta como un stack de **docker-compose** con dos contenedores:
     # Define how to reach an existing service on our infrastructure
     [http.services.pentaho.loadBalancer]
       [[http.services.pentaho.loadBalancer.servers]]
-        url = "http://pentaho:7001"
+        url = "http://pentaho:8080"
 ```
 
 - Guardar el siguiente texto en el fichero **/opt/composer/pentaho/docker-compose.yaml**:
@@ -362,9 +364,9 @@ services:
     volumes:
     - "/opt/pentaho/pentaho-server:/opt/pentaho-server"
     ports:
-    - "7001:7001"
+    - "8080:8080"
     environment:
-    - PENTAHO_PORT=7001
+    - PENTAHO_PORT=8080
     - PROXY_PORT=443
     - PROXY_SCHEME=https
 
@@ -405,14 +407,14 @@ $ cd /opt/composer/pentaho
 $ docker-compose ps
 Name                Command               State                    Ports
 -------------------------------------------------------------------------------------------
-pentaho   /tini -- /bin/sh -c "/opt/ ..."   Up      0.0.0.0:7001->7001/tcp, 8080/tcp
+pentaho   /tini -- /bin/sh -c "/opt/ ..."   Up      0.0.0.0:8080->8080/tcp
 traefik   /entrypoint.sh --entryPoin ...    Up      0.0.0.0:443->443/tcp, 0.0.0.0:80->80/tcp 
 
 $ docker-compose logs pentaho -f | grep "Pentaho BI Platform server is ready"
 pentaho    | Pentaho BI Platform server is ready. (pentaho-platform-core 8.3.0.0-371)
 ```
 
-Una vez que se alcance el estado "*Pentaho BI platform server is ready*" (puede tardar varios minutos), el servicio Pentaho estará **accesible en los puertos 7001 (http) y 443 (https)** del servidor.
+Una vez que se alcance el estado "*Pentaho BI platform server is ready*" (puede tardar varios minutos), el servicio Pentaho estará **accesible en los puertos 8080 (http) y 443 (https)** del servidor.
 
 ## Log y posibles errores
 
