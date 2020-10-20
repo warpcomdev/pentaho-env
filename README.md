@@ -183,13 +183,13 @@ La ejecución de Pentaho tiene una multitud de prerequisitos: ciertas versiones 
 
 Para simplificar el proceso de despliegue, todas estas dependencias y prerequisitos se han empaquetado en una imagen docker, de código abierto, con copyright de Telefónica de España: https://hub.docker.com/r/telefonicaiot/pentaho-dsp.
 
-La versión recomendada de la imagen durante la redacción de este documento es la **1.1.3**. La imagen debe descargarse al repositorio local con:
+La versión recomendada de la imagen durante la redacción de este documento es la **1.1.4**. La imagen debe descargarse al repositorio local con:
 
 ```bash
-$ docker pull telefonicaiot/pentaho-dsp:1.1.3
+$ docker pull telefonicaiot/pentaho-dsp:1.1.4
 $ docker image ls telefonicaiot/pentaho-dsp 
 REPOSITORY                            TAG                 IMAGE ID            CREATED             SIZE
-docker.io/telefonicaiot/pentaho-dsp   1.1.3               e6d959d3b73b        9 days ago          635 MB  
+docker.io/telefonicaiot/pentaho-dsp   1.1.4               e6d959d3b73b        9 days ago          635 MB  
 ```
 
 ### Preparación de base de datos
@@ -566,4 +566,4 @@ El backup de la aplicación comprende:
   - /opt/traefik
   - /opt/composer
 
-Pentaho suele utilizarse como herramienta de consulta (sólo lectura), de manera que no se espera un alto volumen de escrituras a bases de datos, y mucho menos a disco (básicmente, la escritura a disco es log). De cualquier forma, la restauración de las bases de datos y directorios debe hacerse con el servicio detenido.
+Pentaho suele utilizarse como herramienta de consulta (sólo lectura), de manera que no se espera un alto volumen de escrituras a bases de datos, y mucho menos a disco. De cualquier forma, la restauración de las bases de datos y directorios debe hacerse con el servicio detenido.
