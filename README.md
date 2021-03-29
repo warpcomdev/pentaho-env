@@ -183,13 +183,13 @@ La ejecución de Pentaho tiene una multitud de prerequisitos: ciertas versiones 
 
 Para simplificar el proceso de despliegue, todas estas dependencias y prerequisitos se han empaquetado en una imagen docker, de código abierto, con copyright de Telefónica de España: https://hub.docker.com/r/telefonicaiot/pentaho-dsp.
 
-La versión recomendada de la imagen durante la redacción de este documento es la **1.1.4**. La imagen debe descargarse al repositorio local con:
+La versión recomendada de la imagen durante la redacción de este documento es la **1.1.6**. La imagen debe descargarse al repositorio local con:
 
 ```bash
-$ docker pull telefonicaiot/pentaho-dsp:1.1.4
+$ docker pull telefonicaiot/pentaho-dsp:1.1.6
 $ docker image ls telefonicaiot/pentaho-dsp 
 REPOSITORY                            TAG                 IMAGE ID            CREATED             SIZE
-docker.io/telefonicaiot/pentaho-dsp   1.1.4               e6d959d3b73b        9 days ago          635 MB  
+docker.io/telefonicaiot/pentaho-dsp   1.1.6               e6d959d3b73b        9 days ago          635 MB  
 ```
 
 ### Preparación de base de datos
@@ -369,6 +369,7 @@ services:
     - PENTAHO_PORT=8080
     - PROXY_PORT=443
     - PROXY_SCHEME=https
+    - EXTRA_CATALINA_OPTS=-Duser.timezone=Europe/Madrid
 
   traefik:
     container_name: traefik
