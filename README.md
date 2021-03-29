@@ -265,7 +265,7 @@ $ docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
   -e JACKRABBIT_PASSWORD="$JACKRABBIT_PASSWORD" \
   -e QUARTZ_PASSWORD="$QUARTZ_PASSWORD" \
   -e HIBERNATE_PASSWORD="$HIBERNATE_PASSWORD" \
-  telefonicaiot/pentaho-dsp:1.1.3 /opt/config.sh \
+  telefonicaiot/pentaho-dsp:1.1.6 /opt/config.sh \
   "$POSTGRES_HOST" "$POSTGRES_PORT" iot_ deprecated "node1" > /opt/pentaho/schema.sql
 ```
 
