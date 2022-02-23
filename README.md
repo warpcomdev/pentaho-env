@@ -131,12 +131,12 @@ sysctl net.ipv4.conf.all.forwarding = 1
 
 Para que estos parámetros sigan aplicando después del arranque, deben guardarse en un fichero en **/etc/sysctl.d**.
 
-### Git
+### Herramientas 
 
-Se recomienda también tener instalado git en el servidor, para interaccionar con los diferentes repos de proyecto (iconos, ficheros compose, etc)
+Se recomienda también tener instaladas en el servidor otras herramientas útiles para editar ficheros, descomprimir carpetas, etc:
 
 ```bash
-sudo yum install git
+sudo yum install -y git unzip wget vim nano
 ```
 
 ### Volúmenes
@@ -307,7 +307,7 @@ Password for user iot_jcr_user:
         1
 (1 row)
 
-$ psql -c "SELECT * FROM qrtz5_locks LIMIT 1;" -U "iot_pentaho_user" -h "${PSQL_SERVER}"  "iot_quartz"
+$ psql -c "SELECT 1;" -U "iot_pentaho_user" -h "${PSQL_SERVER}"  "iot_quartz"
 Password for user iot_pentaho_user:
    lock_name
 ----------------
@@ -337,7 +337,7 @@ $ export POSTGRES_HOST=...
 $ export POSTGRES_PORT=5432
 
 # "node1" es el nombre que daremos al nodo principal del cluster.
-$ docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
+$ sudo docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
   -e JACKRABBIT_PASSWORD="$JACKRABBIT_PASSWORD" \
   -e QUARTZ_PASSWORD="$QUARTZ_PASSWORD" \
   -e HIBERNATE_PASSWORD="$HIBERNATE_PASSWORD" \
@@ -385,7 +385,7 @@ $ export POSTGRES_HOST=...
 $ export POSTGRES_PORT=5432
 
 # "node2" es el nombre que daremos al nodo principal del cluster.
-$ docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
+$ sudo docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
   -e JACKRABBIT_PASSWORD="$JACKRABBIT_PASSWORD" \
   -e QUARTZ_PASSWORD="$QUARTZ_PASSWORD" \
   -e HIBERNATE_PASSWORD="$HIBERNATE_PASSWORD" \
@@ -474,7 +474,7 @@ $ docker-compose logs pentaho -f | grep "Pentaho BI Platform server is ready"
 pentaho    | Pentaho BI Platform server is ready. (pentaho-platform-core 8.3.0.0-371)
 ```
 
-Una vez que se alcance el estado "*Pentaho BI platform server is ready*" (puede tardar varios minutos), el servicio Pentaho estará **accesible en los puertos 8080 (http) y 443 (https)** del servidor.
+Una vez que se alcance el estado "*Pentaho BI platform server is ready*" (puede tardar varios minutos), el servicio Pentaho estará **accesible en los puertos 80 (http) y 443 (https)** del servidor, a través de la ruta `http://<ip del servidor>/pentaho`.
 
 Si se quiere que el servicio se arraque automáticamente cuando arranca el servidor, se puede activar el servicio en systemd con los comandos:
 
@@ -583,7 +583,7 @@ La instalación de Pentaho comienza con el usuario y password por defecto:
 
 Es necesario cambiar estas credenciales desde la ventana de administración de Pentaho, siguiendo estos pasos:
 
-- Acceder a `https://<IP del servidor Pentaho>`, e iniciar sesión con las credenciales por defecto.
+- Acceder a `https://<IP del servidor Pentaho>/pentaho`, e iniciar sesión con las credenciales por defecto.
 
 ![Ventana de login pentaho](img/login-pentaho.png)
 
