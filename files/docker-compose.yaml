@@ -1,0 +1,85 @@
+version: "3.5"
+services:
+
+  urbo2:
+    container_name: urbo2
+    hostname: urbo2
+    image: "telefonicaiot/urbo2:${URBO2_VERSION}"
+    environment:
+    - "URBO2_NODE_ENV=production"
+    - "URBO2_APP_PORT=8081"
+    - "URBO2_LOG_LEVEL=${URBO2_LOG_LEVEL}"
+    - "URBO2_LOG_OB=${URBO2_LOG_OB}"
+    - "URBO2_LOG_COMP=${URBO2_LOG_COMP}"
+    - "URBO2_KEYSTONE_ENDPOINT=${URBO2_KEYSTONE_ENDPOINT}"
+    - "URBO2_SESSION_SECRET=${URBO2_SESSION_SECRET}"
+    - "URBO2_SESSION_EXP_TIME=${URBO2_SESSION_EXP_TIME}"
+    - "URBO2_REJECT_UNAUTHORIZED=${URBO2_REJECT_UNAUTHORIZED}"
+    - "URBO2_MONGO_URI=${URBO2_MONGO_URI}"
+    - "URBO_MONGO_RETRIES=${URBO_MONGO_RETRIES}"
+    - "URBO_MONGO_RECONNECT_INTERVAL=${URBO_MONGO_RECONNECT_INTERVAL}"
+    - "URBO2_MONGO_USERNAME=${URBO2_MONGO_USERNAME}"
+    - "URBO2_MONGO_PASSWORD=${URBO2_MONGO_PASSWORD}"
+    - "URBO2_CONTAINER_PORT=8081"
+    - "URBO2_DEBUGGING_PORT=9229"
+    ports:
+    - "8081:8081"
+    expose:
+    - "8081"
+    - "9229"
+    volumes:
+    - "${URBO_ICONS_PATH}/verticals:/usr/src/app/dist/assets/img/verticals:ro"
+    - "${TENANT_THEMES_PATH}:/usr/src/app/dist/assets/tenantThemes:ro"
+    logging:
+      driver: json-file
+      options:
+        max-size: "250m"
+    #restart: unless-stopped
+
+# "Note that the .zip version is 8.3.0 while image version is 8.3.5. This is ok".
+
+  pentaho:
+    container_name: pentaho
+    hostname: pentaho
+    image: "telefonicaiot/pentaho-dsp:${PENTAHO_VERSION}"
+    volumes:
+    - "${PENTAHO_PATH}/pentaho-server:/opt/pentaho-server"
+    expose:
+    - "7001"
+    ports:
+    - "7001:7001"
+    environment:
+    - "PENTAHO_PORT=7001"
+    - "PROXY_PORT=443"
+    - "PROXY_SCHEME=https"
+    - "POSTGRES_PASSWORD=Urbo.Password"
+    logging:
+      driver: json-file
+      options:
+        max-size: "250m"
+    #restart: unless-stopped
+
+  traefik:
+    container_name: traefik
+    image: "traefik:${TRAEFIK_VERSION}"
+    volumes:
+    - "/opt/traefik:/etc/traefik/conf.d:ro"
+    ports:
+    - "443:443"
+    - "80:80"
+    command:
+    - "--entryPoints.web.address=:80"
+    - "--entryPoints.websecure.address=:443"
+    - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+    - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+    - "--providers.file.directory=/etc/traefik/conf.d"
+    logging:
+      driver: json-file
+      options:
+        max-size: "250m"
+    restart: unless-stopped
+
+networks:
+  default:
+    external:
+      name: composer

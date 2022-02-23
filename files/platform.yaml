@@ -1,0 +1,21 @@
+http:
+  routers:
+     pentaho:
+      rule: "PathPrefix(`/pentaho`)"
+      service: "pentaho"
+      tls: {}
+     urbo2:
+      rule: "PathPrefix(`/`)"
+      service: "urbo2"
+      tls: {}
+
+  services:
+    # Define how to reach an existing service on our infrastructure
+    pentaho:
+      loadBalancer:
+        servers:
+        - url: "http://pentaho:7001"
+    urbo2:
+      loadBalancer:
+        servers:
+        - url: "http://urbo2:8081"

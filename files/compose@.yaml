@@ -1,0 +1,18 @@
+[Unit]
+Description=%i service with docker compose
+Requires=docker.service
+Wants=docker.service
+After=docker.service
+
+[Service]
+WorkingDirectory=/opt/composer/%i
+ExecStartPre=-/usr/bin/docker-compose down -v
+ExecStart=/usr/bin/docker-compose up --remove-orphans
+ExecStop=/usr/bin/docker-compose down -v
+User=root
+Restart=always
+RestartSec=30
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target

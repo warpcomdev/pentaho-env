@@ -1,8 +1,21 @@
-# Procedimiento instalación Pentaho
+# Procedimiento instalación Urbo, Pentaho
 
 ## Introducción
 
-Este documento describe el procedimiento a seguir para desplegar el servicio de Pentaho en alta disponibilidad, en servidores dedicados (físicos o virtuales), así como las pruebas de validación y monitorización del servicio.
+Este documento describe el procedimiento a seguir para desplegar los servicios de Urbo y/o Pentaho en alta disponibilidad, en servidores dedicados (físicos o virtuales), así como las pruebas de validación y monitorización del servicio.
+
+### Aclaración proxy inverso
+
+Estas instrucciones incluyen también la instalación de un proxy inverso (Se eligió `traefik` por facilidad para gestionar certificados). Este proxy inverso solo se utiliza para poder hacer pruebas de conexión con Pentaho, en los siguientes casos:
+
+- Si se instala antes de que esté disponible el balanceador del proyecto.
+- Si hay algún problema con la configuración del balanceador, y se quiere probar accediendo directamente a los nodos.
+- Si hay problemas solo en uno de los dos servidores de la pareja de HA, y se quiere acceder específicamente al servidor con problemas, evitando que el balanceador nos pueda enviar al otro nodo.
+
+Esos son los únicos casos en los que está recomendado el uso del proxy inverso. En particular, el proxy inverso **NO** se debe usar desde el balanceador del proyecto, sino que éste debe usar los puertos directos de los servicios:
+
+- Pentaho: puerto 7001
+- Urbo: puerto 8080
 
 ## Prerequisitos
 
@@ -118,20 +131,35 @@ sysctl net.ipv4.conf.all.forwarding = 1
 
 Para que estos parámetros sigan aplicando después del arranque, deben guardarse en un fichero en **/etc/sysctl.d**.
 
-### Volúmenes
+### Git
 
-La aplicación utiliza dos directorios:
-
-* `/opt/pentaho`: Este directorio contendrá el volumen `pentaho-server` con la distribución de pentaho.
-* `/opt/composer/platform`: Este directorio contendrá el manifiesto de docker-compose que lanzará el servicio.
-
-Ambos directorios deben pertenecer al UID 1000:
+Se recomienda también tener instalado git en el servidor, para interaccionar con los diferentes repos de proyecto (iconos, ficheros compose, etc)
 
 ```bash
+sudo yum install git
+```
+
+### Volúmenes
+
+La aplicación utiliza varios directorios:
+
+* `/opt/platform`: Este directorio contiene los volúmenes de iconos y temas de Urbo.
+* `/opt/pentaho`: Este directorio contendrá el volumen `pentaho-server` con la distribución de pentaho.
+* `/opt/traefik`: Este directorio contendrá la configuración del proxy inverso local.
+* `/opt/composer/platform`: Este directorio contendrá el manifiesto de docker-compose que lanzará el servicio.
+
+Por convención, todos estos directorios se hacen pertenecer al UID 1000:
+
+```bash
+$ sudo mkdir -p /opt/platform
 $ sudo mkdir -p /opt/pentaho
-$ sudo mkdir -p /opt/composer/pentaho
+$ sudo mkdir -p /opt/traefik
+$ sudo mkdir -p /opt/composer/platform
+
+$ sudo chown -R 1000:1000 /opt/platform
 $ sudo chown -R 1000:1000 /opt/pentaho
-$ sudo chown -R 1000:1000 /opt/composer/pentaho
+$ sudo chown -R 1000:1000 /opt/traefik
+$ sudo chown -R 1000:1000 /opt/composer/platform
 ```
 
 Además, docker utiliza el directorio */var/lib/docker* para almacenar capas e imágenes. Si se monta un volumen XFS en esa ruta, **debe estar formateado con ftype=1**:
@@ -177,7 +205,7 @@ drwxr-xr-x  3 1000 1000   27 Jun 12  2019 third-party-tools
 drwxrwxrwx 10 1000 1000  234 Jun 11  2019 tomcat
 ```
 
-### Obtención de imagen docker
+### Obtención de imagen docker Pentaho
 
 La ejecución de Pentaho tiene una multitud de prerequisitos: ciertas versiones de librerías de apoyo (JRE, Tomcat native, drivers JDBC...), variables de entorno (PENTAHO_HOME, JAVA_HOME...), configuraciones (variados ficheros .xml, .conf, properties...) e incluso scripts de pre-instalación (creación de esquemas en bases de datos, recompilación de ficheros .jar...).
 
@@ -192,7 +220,34 @@ REPOSITORY                            TAG                 IMAGE ID            CR
 docker.io/telefonicaiot/pentaho-dsp   1.1.6               e6d959d3b73b        9 days ago          635 MB  
 ```
 
-### Preparación de base de datos
+### Obtención de imagen docker Urbo
+
+La imagen de Urbo se encuentra en un repositorio docker privado. Para poder utilizarla, se debe iniciar sesión con el comando `docker login`:
+
+```bash
+docker login
+
+# La versión de imagen de Urbo a fecha de redacción de este documento es 2.10.0
+docker pull telefonicaiot/urbo2:2.10.0
+docker logout
+```
+
+### Clonado de repositorios de iconos y temas
+
+Además de la imagen, para poner Urbo en producción se necesita clonar los repositorios de temas e iconos de Urbo:
+
+- El repositorio de temas está en https://github.com/telefonicaiot/urbo-icons,
+- El repositorio de temas es propio de cada proyecto.
+
+Por convención se suelen clonar ambos debajo de `/opt/platform`:
+
+```bash
+cd /opt/platform
+git clone https://github.com/telefonicaiot/urbo-icons
+git clone https://github.com/telefonicaiot/XXXXXX-project
+```
+
+### Preparación de base de datos Pentaho
 
 El último prerequisito es crear las bases de datos postgresql donde Pentaho almacenará el estado y configuración de la aplicación. Pentaho utiliza tres bases de datos:
 
@@ -331,66 +386,42 @@ DB_PASSWORD="deprecated"
 DB_CLUSTER="node2"
 ```
 
-### Creación del servicio
+### Configuración del servicio
 
 El servicio se ejecuta como un stack de **docker-compose** con dos contenedores: el propio Pentaho, y un proxy inverso traefik que proporciona la interfaz HTTPS. La configuración del servicio docker-compose se hace mediante los dos ficheros siguientes:
 
-- Guardar el siguiente texto en el fichero **/opt/traefik/pentaho.toml**:
+- Copiar el fichero [platform.yaml](platform.yaml) en la ruta **/opt/traefik/platform.yaml**
+- Copiar el fichero [.env](env) en la ruta **/opt/composer/pentaho/.env**:
+- Copiar el fichero [docker-compose.yaml](docker-compose.yaml) en la ruta **/opt/composer/pentaho/docker-compose.yaml**:
+- Copiar el fichero [compose@.service](compose@.service) en la ruta **/etc/systemd/system/compose@.service**
+- Editar el fichero `/opt/composer/pentaho.env` para establecer los parámetros adecuados:
 
-```toml
-[http]
-  [http.routers]
-     [http.routers.pentaho]
-      rule = "PathPrefix(`/`)"
-      service = "pentaho"
-      [http.routers.pentaho.tls]
-
-  [http.services]
-    # Define how to reach an existing service on our infrastructure
-    [http.services.pentaho.loadBalancer]
-      [[http.services.pentaho.loadBalancer.servers]]
-        url = "http://pentaho:8080"
+```bash
+# Versiones de software
+URBO2_VERSION=2.10.0
+PENTAHO_VERSION=1.1.6
+TRAEFIK_VERSION=2.2
+# Rutas
+URBO_ICONS_PATH=/opt/platform/urbo-icons
+TENANT_THEMES_PATH=/opt/platform/<REPO_DE_PROYECTO>/PRO/branding
+PENTAHO_PATH=/opt/pentaho
+TRAEFIK_PATH=/opt/traefik
+# Settings de Urbo
+URBO2_LOG_LEVEL=INFO
+URBO2_LOG_OB=ES
+URBO2_LOG_COMP=Urbo2
+URBO2_KEYSTONE_ENDPOINT=<URL_KEYSTONE>
+URBO2_SESSION_SECRET=<GENERAR UN SECRETO ALEATORIO>
+URBO2_SESSION_EXP_TIME=3600
+URBO2_REJECT_UNAUTHORIZED=false
+URBO2_MONGO_URI=mongodb://<SERVIDOR_1>,<SERVIDOR_2>,<SERVIDOR_3>:27017/urbo2?replicaSet=<REPLICASET>
+URBO_MONGO_RETRIES=10
+URBO_MONGO_RECONNECT_INTERVAL=5000
+URBO2_MONGO_USERNAME=
+URBO2_MONGO_PASSWORD=
 ```
 
-- Guardar el siguiente texto en el fichero **/opt/composer/pentaho/docker-compose.yaml**:
-
-```yaml
-version: "3.5"
-services:
-
-  pentaho:
-    container_name: pentaho
-    image: telefonicaiot/pentaho-dsp:1.1.6
-    volumes:
-    - "/opt/pentaho/pentaho-server:/opt/pentaho-server"
-    ports:
-    - "8080:8080"
-    environment:
-    - PENTAHO_PORT=8080
-    - PROXY_PORT=443
-    - PROXY_SCHEME=https
-    - EXTRA_CATALINA_OPTS=-Duser.timezone=Europe/Madrid
-
-  traefik:
-    container_name: traefik
-    image: traefik:2.2
-    volumes:
-    - "/opt/traefik:/etc/traefik/conf.d:ro"
-    ports:
-    - "443:443"
-    - "80:80"
-    command:
-    - "--entryPoints.web.address=:80"
-    - "--entryPoints.websecure.address=:443"
-    - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-    - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-    - "--providers.file.directory=/etc/traefik/conf.d"
-
-networks:
-  default:
-    external:
-      name: composer
-```
+### Ejecución del servicio
 
 Una vez creados estos ficheros, el servicio puede lanzarse con el comando:
 
@@ -399,23 +430,37 @@ $ cd /opt/composer/pentaho
 $ docker-compose up -d
 ```
 
-**docker-compose** se encargará de recordar que el stack está lanzado y volver a lanzarlo si falla, o después de un reinicio del servidor.
+O como servicio con systemd, usando los comandos:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl start compose@platform
+```
 
 El estado del servicio puede comprobarse con:
 
 ```bash
-$ cd /opt/composer/pentaho
+$ cd /opt/composer/platform
 $ docker-compose ps
-Name                Command               State                    Ports
--------------------------------------------------------------------------------------------
-pentaho   /tini -- /bin/sh -c "/opt/ ..."   Up      0.0.0.0:8080->8080/tcp
-traefik   /entrypoint.sh --entryPoin ...    Up      0.0.0.0:443->443/tcp, 0.0.0.0:80->80/tcp 
+ Name                Command               State                                   Ports
+------------------------------------------------------------------------------------------------------------------------
+pentaho   /tini -- /bin/sh -c /opt/ ...    Up      0.0.0.0:7001->7001/tcp,:::7001->7001/tcp, 8080/tcp
+traefik   /entrypoint.sh --entryPoin ...   Up      0.0.0.0:443->443/tcp,:::443->443/tcp,
+                                                   0.0.0.0:80->80/tcp,:::80->80/tcp
+urbo2     docker-entrypoint.sh npm start   Up      0.0.0.0:8081->8081/tcp,:::8081->8081/tcp, 9229/tcp
 
 $ docker-compose logs pentaho -f | grep "Pentaho BI Platform server is ready"
 pentaho    | Pentaho BI Platform server is ready. (pentaho-platform-core 8.3.0.0-371)
 ```
 
 Una vez que se alcance el estado "*Pentaho BI platform server is ready*" (puede tardar varios minutos), el servicio Pentaho estará **accesible en los puertos 8080 (http) y 443 (https)** del servidor.
+
+Si se quiere que el servicio se arraque automáticamente cuando arranca el servidor, se puede activar el servicio en systemd con los comandos:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable compose@platform
+```
 
 ## Log y posibles errores
 
