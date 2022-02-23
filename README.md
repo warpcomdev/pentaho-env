@@ -205,6 +205,19 @@ drwxr-xr-x  3 1000 1000   27 Jun 12  2019 third-party-tools
 drwxrwxrwx 10 1000 1000  234 Jun 11  2019 tomcat
 ```
 
+### Obtención de imagen docker Urbo
+
+La imagen de Urbo se encuentra en un repositorio docker privado. Para poder utilizarla, se debe iniciar sesión con el comando `docker login`:
+
+```bash
+docker login
+
+# La versión de imagen de Urbo a fecha de redacción de este documento es 2.10.0
+docker pull telefonicaiot/urbo2:2.10.0
+```
+
+Una vez completadas las descargas de esta imagen y la de Pentaho, se debe recordar cerrar sesión con `docker logout`.
+
 ### Obtención de imagen docker Pentaho
 
 La ejecución de Pentaho tiene una multitud de prerequisitos: ciertas versiones de librerías de apoyo (JRE, Tomcat native, drivers JDBC...), variables de entorno (PENTAHO_HOME, JAVA_HOME...), configuraciones (variados ficheros .xml, .conf, properties...) e incluso scripts de pre-instalación (creación de esquemas en bases de datos, recompilación de ficheros .jar...).
@@ -220,18 +233,6 @@ REPOSITORY                            TAG                 IMAGE ID            CR
 docker.io/telefonicaiot/pentaho-dsp   1.1.6               e6d959d3b73b        9 days ago          635 MB  
 ```
 
-### Obtención de imagen docker Urbo
-
-La imagen de Urbo se encuentra en un repositorio docker privado. Para poder utilizarla, se debe iniciar sesión con el comando `docker login`:
-
-```bash
-docker login
-
-# La versión de imagen de Urbo a fecha de redacción de este documento es 2.10.0
-docker pull telefonicaiot/urbo2:2.10.0
-docker logout
-```
-
 ### Clonado de repositorios de iconos y temas
 
 Además de la imagen, para poner Urbo en producción se necesita clonar los repositorios de temas e iconos de Urbo:
@@ -239,12 +240,32 @@ Además de la imagen, para poner Urbo en producción se necesita clonar los repo
 - El repositorio de temas está en https://github.com/telefonicaiot/urbo-icons,
 - El repositorio de temas es propio de cada proyecto.
 
-Por convención se suelen clonar ambos debajo de `/opt/platform`:
+Por convención se suelen clonar ambos debajo de `$HOME/projects`:
 
 ```bash
-cd /opt/platform
+cd
+mkdir projects
+cd projects
 git clone https://github.com/telefonicaiot/urbo-icons
 git clone https://github.com/telefonicaiot/XXXXXX-project
+```
+
+Una vez clonados, copiareamos los directorios relevantes a la ruta `/opt/platform/`:
+
+- Iconos de urbo: `/opt/platform/urbo-icons`
+
+```bash
+sudo mkdir -p /opt/platform/urbo-icons
+sudo cp -r $HOME/projects/urbo-icons/verticals /opt/platform/urbo-icons
+sudo chown -r 1000:1000 /opt/platform/urbo-icons
+```
+
+- Temas de urbo: `/opt/platform/tenantThemes`
+
+```bash
+sudo mkdir -p /opt/platform/tenantThemes
+sudo cp -r $HOME/projects/XXXXXX-project/PRO/branding/* /opt/platform/tenantThemes
+sudo chown -r 1000:1000 /opt/platform/tenantThemes
 ```
 
 ### Preparación de base de datos Pentaho
@@ -403,7 +424,7 @@ PENTAHO_VERSION=1.1.6
 TRAEFIK_VERSION=2.2
 # Rutas
 URBO_ICONS_PATH=/opt/platform/urbo-icons
-TENANT_THEMES_PATH=/opt/platform/<REPO_DE_PROYECTO>/PRO/branding
+TENANT_THEMES_PATH=/opt/platform/tenantThemes
 PENTAHO_PATH=/opt/pentaho
 TRAEFIK_PATH=/opt/traefik
 # Settings de Urbo
