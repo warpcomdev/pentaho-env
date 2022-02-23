@@ -237,7 +237,7 @@ docker.io/telefonicaiot/pentaho-dsp   1.1.6               e6d959d3b73b        9 
 
 Además de la imagen, para poner Urbo en producción se necesita clonar los repositorios de temas e iconos de Urbo:
 
-- El repositorio de temas está en https://github.com/telefonicaiot/urbo-icons,
+- El repositorio de temas está en https://github.com/telefonicasc/urbo-icons,
 - El repositorio de temas es propio de cada proyecto.
 
 Por convención se suelen clonar ambos debajo de `$HOME/projects`:
@@ -246,8 +246,8 @@ Por convención se suelen clonar ambos debajo de `$HOME/projects`:
 cd
 mkdir projects
 cd projects
-git clone https://github.com/telefonicaiot/urbo-icons
-git clone https://github.com/telefonicaiot/XXXXXX-project
+git clone https://github.com/telefonicasc/urbo-icons
+git clone https://github.com/telefonicasc/XXXXXX-project
 ```
 
 Una vez clonados, copiareamos los directorios relevantes a la ruta `/opt/platform/`:
@@ -411,11 +411,11 @@ DB_CLUSTER="node2"
 
 El servicio se ejecuta como un stack de **docker-compose** con dos contenedores: el propio Pentaho, y un proxy inverso traefik que proporciona la interfaz HTTPS. La configuración del servicio docker-compose se hace mediante los dos ficheros siguientes:
 
-- Copiar el fichero [platform.yaml](platform.yaml) en la ruta **/opt/traefik/platform.yaml**
-- Copiar el fichero [.env](env) en la ruta **/opt/composer/pentaho/.env**:
-- Copiar el fichero [docker-compose.yaml](docker-compose.yaml) en la ruta **/opt/composer/pentaho/docker-compose.yaml**:
-- Copiar el fichero [compose@.service](compose@.service) en la ruta **/etc/systemd/system/compose@.service**
-- Editar el fichero `/opt/composer/pentaho.env` para establecer los parámetros adecuados:
+- Copiar el fichero [platform.yaml](files/platform.yaml) en la ruta **/opt/traefik/platform.yaml**
+- Copiar el fichero [.env](files/env) en la ruta **/opt/composer/platform/.env**:
+- Copiar el fichero [docker-compose.yaml](files/docker-compose.yaml) en la ruta **/opt/composer/platform/docker-compose.yaml**:
+- Copiar el fichero [compose@.service](files/compose@.service) en la ruta **/etc/systemd/system/compose@.service**
+- Editar el fichero `/opt/composer/platform.env` para establecer los parámetros adecuados:
 
 ```bash
 # Versiones de software
@@ -447,7 +447,7 @@ URBO2_MONGO_PASSWORD=
 Una vez creados estos ficheros, el servicio puede lanzarse con el comando:
 
 ```bash
-$ cd /opt/composer/pentaho
+$ cd /opt/composer/platform
 $ docker-compose up -d
 ```
 
