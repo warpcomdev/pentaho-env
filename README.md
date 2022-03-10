@@ -289,7 +289,7 @@ GRANT ALL PRIVILEGES ON DATABASE iot_quartz to iot_pentaho_user;
 
 CREATE USER iot_hibuser PASSWORD 'HIBERNATE_PASSWORD';
 CREATE DATABASE iot_hibernate WITH OWNER = iot_hibuser ENCODING = 'UTF8' TABLESPACE = pg_default;
-GRANT ALL PRIVILEGES ON DATABASE iothibernate to iot_hibuser;
+GRANT ALL PRIVILEGES ON DATABASE iot_hibernate to iot_hibuser;
 ```
 
 El servidor de bases de datos debe ser accesible desde el servidor donde se instala Pentaho. Esto se puede comprobar ejecutando los siguientes comandos (**Nota**: es necesario tener a mano las contraseñas de los tres usuarios anteriores):
