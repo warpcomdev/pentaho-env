@@ -60,7 +60,7 @@ services:
     ports:
     - "9081:9081"
     expose:
-    - "0081"
+    - "9081"
     - "9230"
     volumes:
     - "${URBO_ICONS_PATH}/verticals:/usr/src/app/dist/assets/img/verticals:ro"
