@@ -617,6 +617,13 @@ La conexión puede probarse desde el propio menú de configuración, en el botó
 
 ![Test conexión Urbo](img/db-test-connection.png)
 
+En entornos con pgpool, es importante también configurar los settings de pooling del datasource, para que pentaho pueda detectar cuando pgpool cierra una conexión por inactividad. Esto se hace desde los settings de *pooling* del datasource, habilitando estos dos parámetros:
+
+- validation query: **SELECT 1**
+- test on borrow: **true**
+
+![Validacion del pool](img/db-validate-pool.png)
+
 ## Backup y restore
 
 El backup de la aplicación comprende:
