@@ -224,13 +224,13 @@ La ejecución de Pentaho tiene una multitud de prerequisitos: ciertas versiones 
 
 Para simplificar el proceso de despliegue, todas estas dependencias y prerequisitos se han empaquetado en una imagen docker, de código abierto, con copyright de Telefónica de España: https://hub.docker.com/r/telefonicaiot/pentaho-dsp.
 
-La versión recomendada de la imagen durante la redacción de este documento es la **1.1.6**. La imagen debe descargarse al repositorio local con:
+La versión recomendada de la imagen durante la redacción de este documento es la **1.1.7**. La imagen debe descargarse al repositorio local con:
 
 ```bash
-$ docker pull telefonicaiot/pentaho-dsp:1.1.6
+$ docker pull telefonicaiot/pentaho-dsp:1.1.7
 $ docker image ls telefonicaiot/pentaho-dsp 
 REPOSITORY                            TAG                 IMAGE ID            CREATED             SIZE
-docker.io/telefonicaiot/pentaho-dsp   1.1.6               e6d959d3b73b        9 days ago          635 MB  
+docker.io/telefonicaiot/pentaho-dsp   1.1.7               e6d959d3b73b        9 days ago          635 MB  
 ```
 
 ### Clonado de repositorios de iconos y temas
@@ -341,7 +341,7 @@ $ sudo docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
   -e JACKRABBIT_PASSWORD="$JACKRABBIT_PASSWORD" \
   -e QUARTZ_PASSWORD="$QUARTZ_PASSWORD" \
   -e HIBERNATE_PASSWORD="$HIBERNATE_PASSWORD" \
-  telefonicaiot/pentaho-dsp:1.1.6 /opt/config.sh \
+  telefonicaiot/pentaho-dsp:1.1.7 /opt/config.sh \
   "$POSTGRES_HOST" "$POSTGRES_PORT" iot_ deprecated "node1" > /opt/pentaho/schema.sql
 ```
 
@@ -389,7 +389,7 @@ $ sudo docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
   -e JACKRABBIT_PASSWORD="$JACKRABBIT_PASSWORD" \
   -e QUARTZ_PASSWORD="$QUARTZ_PASSWORD" \
   -e HIBERNATE_PASSWORD="$HIBERNATE_PASSWORD" \
-  telefonicaiot/pentaho-dsp:1.1.6 /opt/config.sh \
+  telefonicaiot/pentaho-dsp:1.1.7 /opt/config.sh \
   "$POSTGRES_HOST" "$POSTGRES_PORT" iot_ deprecated "node2"
 ```
 
@@ -420,7 +420,7 @@ El servicio se ejecuta como un stack de **docker-compose** con dos contenedores:
 ```bash
 # Versiones de software
 URBO2_VERSION=2.10.0
-PENTAHO_VERSION=1.1.6
+PENTAHO_VERSION=1.1.7
 TRAEFIK_VERSION=2.2
 # Rutas
 URBO_ICONS_PATH=/opt/platform/urbo-icons
