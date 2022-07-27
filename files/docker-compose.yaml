@@ -88,6 +88,7 @@ services:
     - "PROXY_PORT=443"
     - "PROXY_SCHEME=https"
     - "POSTGRES_PASSWORD=Urbo.Password"
+    - "EXTRA_CATALINA_OPTS=-Duser.timezone=Europe/Madrid"
     logging:
       driver: json-file
       options:
