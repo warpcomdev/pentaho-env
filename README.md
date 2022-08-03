@@ -352,7 +352,7 @@ Si el proceso de configuración se completa correctamente, creará un fichero **
 ```bash
 $ cat /opt/pentaho/pentaho-server/env.postgresql
 DB_SERVER="10.0.0.60"
-DB_PORT="5432"
+DB_PORT="9999"
 DB_PREFIX="iot_"
 JACKRABBIT_PASSWORD="<password>"
 QUARTZ_PASSWORD="<password>"
@@ -382,7 +382,7 @@ $ export HIBERNATE_PASSWORD=...
 
 # Datos de acceso a postgres
 $ export POSTGRES_HOST=...
-$ export POSTGRES_PORT=5432
+$ export POSTGRES_PORT=...
 
 # "node2" es el nombre que daremos al nodo principal del cluster.
 $ sudo docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
@@ -398,7 +398,7 @@ De nuevo, la correcta ejecución de este script generará un fichero */opt/penta
 ```bash
 $ cat /opt/pentaho/pentaho-server/env.postgresql
 DB_SERVER="10.0.0.60"
-DB_PORT="5432"
+DB_PORT="9999"
 DB_PREFIX="iot_"
 JACKRABBIT_PASSWORD="<password>"
 QUARTZ_PASSWORD="<password>"
