@@ -21,3 +21,10 @@ URBO_MONGO_RETRIES=10
 URBO_MONGO_RECONNECT_INTERVAL=5000
 URBO2_MONGO_USERNAME=
 URBO2_MONGO_PASSWORD=
+# ---------- PG config --------------
+## They are used to config the pg connection pool
+## https://node-postgres.com/api/pool
+URBO2_PG_CONNECTION_TIMEOUT=0
+URBO2_PG_IDLE_TIMEOUT=10000
+URBO2_PG_MAX_CONNECTIONS=20
+URBO2_PG_ALLOW_EXIT_ON_IDLE=false
