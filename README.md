@@ -572,6 +572,14 @@ En caso de que alguna de las contraseñas de base de datos especificadas sea inc
 
 La solución en todos los casos es reconfigurar los nodos principal y de respaldo tal como se describe en los apartados [configuración de nodo principal] o [configuración de nodo de respaldo], respectivamente, en cada nodo.
 
+### Zona horaria
+
+Para configurar la zona horaria d ePentaho (por defecto utiliza UTC), se le debe pasar esta variable de entorno (dentro del docker-compose o del statefulset de kubernetes):
+
+```
+  - "EXTRA_CATALINA_OPTS=-Duser.timezone=Europe/Madrid"
+```
+
 ## Finalización del despliegue
 
 ### Login inicial
