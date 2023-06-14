@@ -212,8 +212,8 @@ La imagen de Urbo se encuentra en un repositorio docker privado. Para poder util
 ```bash
 docker login
 
-# La versión de imagen de Urbo a fecha de redacción de este documento es 2.10.0
-docker pull telefonicaiot/urbo2:2.10.0
+# La versión de imagen de Urbo a fecha de redacción de este documento es 2.18.4
+docker pull telefonicaiot/urbo2:2.18.4
 ```
 
 Una vez completadas las descargas de esta imagen y la de Pentaho, se debe recordar cerrar sesión con `docker logout`.
@@ -419,7 +419,7 @@ El servicio se ejecuta como un stack de **docker-compose** con dos contenedores:
 
 ```bash
 # Versiones de software
-URBO2_VERSION=2.10.0
+URBO2_VERSION=2.18.4
 PENTAHO_VERSION=2.0.1
 TRAEFIK_VERSION=2.2
 # Rutas
