@@ -172,11 +172,11 @@ $ mkfs.xfs -n ftype=1 /dev/whatever
 
 ### Descarga de Pentaho
 
-La imagen de Pentaho se descarga desde su [repositorio público en sourceforge](https://sourceforge.net/projects/pentaho/files/). En el momento de redacción de esta guía, la versión sugerida es la [8.3.0.0-371](https://sourceforge.net/projects/pentaho/files/Pentaho%208.3/server/pentaho-server-ce-8.3.0.0-371.zip/download#). Esta imagen debe descargarse y descomprimirse en la ruta `/opt/pentaho`:
+La imagen de Pentaho se descarga desde su [repositorio público](https://www.hitachivantara.com/en-us/products/pentaho-platform/data-integration-analytics/pentaho-community-edition.html). En el momento de redacción de esta guía, la versión sugerida es la [9.3.0.0-428](https://privatefilesbucket-community-edition.s3.us-west-2.amazonaws.com/9.3.0.0-428/ce/server/pentaho-server-ce-9.3.0.0-428.zip). Esta imagen debe descargarse y descomprimirse en la ruta `/opt/pentaho`:
 
 ```bash
 $ cd /opt/pentaho
-$ sudo wget "https://sourceforge.net/projects/pentaho/files/Pentaho%208.3/server/pentaho-server-ce-8.3.0.0-371.zip/download#" -O pentaho-server.zip
+$ sudo wget "https://privatefilesbucket-community-edition.s3.us-west-2.amazonaws.com/9.3.0.0-428/ce/server/pentaho-server-ce-9.3.0.0-428.zip" -O pentaho-server.zip
 $ sudo unzip pentaho-server.zip
 $ sudo chown -R 1000:1000 pentaho-server
 ```
@@ -224,13 +224,13 @@ La ejecución de Pentaho tiene una multitud de prerequisitos: ciertas versiones 
 
 Para simplificar el proceso de despliegue, todas estas dependencias y prerequisitos se han empaquetado en una imagen docker, de código abierto, con copyright de Telefónica de España: https://hub.docker.com/r/telefonicaiot/pentaho-dsp.
 
-La versión recomendada de la imagen durante la redacción de este documento es la **1.1.7**. La imagen debe descargarse al repositorio local con:
+La versión recomendada de la imagen durante la redacción de este documento es la **2.0.1**. La imagen debe descargarse al repositorio local con:
 
 ```bash
-$ docker pull telefonicaiot/pentaho-dsp:1.1.7
+$ docker pull telefonicaiot/pentaho-dsp:2.0.1
 $ docker image ls telefonicaiot/pentaho-dsp 
 REPOSITORY                            TAG                 IMAGE ID            CREATED             SIZE
-docker.io/telefonicaiot/pentaho-dsp   1.1.7               e6d959d3b73b        9 days ago          635 MB  
+docker.io/telefonicaiot/pentaho-dsp   2.0.1               e6d959d3b73b        9 days ago          635 MB  
 ```
 
 ### Clonado de repositorios de iconos y temas
@@ -341,7 +341,7 @@ $ sudo docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
   -e JACKRABBIT_PASSWORD="$JACKRABBIT_PASSWORD" \
   -e QUARTZ_PASSWORD="$QUARTZ_PASSWORD" \
   -e HIBERNATE_PASSWORD="$HIBERNATE_PASSWORD" \
-  telefonicaiot/pentaho-dsp:1.1.7 /opt/config.sh \
+  telefonicaiot/pentaho-dsp:2.0.1 /opt/config.sh \
   "$POSTGRES_HOST" "$POSTGRES_PORT" iot_ deprecated "node1" > /opt/pentaho/schema.sql
 ```
 
@@ -389,7 +389,7 @@ $ sudo docker run --rm -it -v /opt/pentaho/pentaho-server:/opt/pentaho-server \
   -e JACKRABBIT_PASSWORD="$JACKRABBIT_PASSWORD" \
   -e QUARTZ_PASSWORD="$QUARTZ_PASSWORD" \
   -e HIBERNATE_PASSWORD="$HIBERNATE_PASSWORD" \
-  telefonicaiot/pentaho-dsp:1.1.7 /opt/config.sh \
+  telefonicaiot/pentaho-dsp:2.0.1 /opt/config.sh \
   "$POSTGRES_HOST" "$POSTGRES_PORT" iot_ deprecated "node2"
 ```
 
@@ -420,7 +420,7 @@ El servicio se ejecuta como un stack de **docker-compose** con dos contenedores:
 ```bash
 # Versiones de software
 URBO2_VERSION=2.10.0
-PENTAHO_VERSION=1.1.7
+PENTAHO_VERSION=2.0.1
 TRAEFIK_VERSION=2.2
 # Rutas
 URBO_ICONS_PATH=/opt/platform/urbo-icons
